@@ -1,0 +1,5 @@
+-- Retourne un angle en fournissant les coordonées
+        function returnangle(x,y,x2,y2)   
+          return 360-(math.atan2(x - x2, y- y2) * 180 /math.pi +90)
+        end
+-- Fin de la fonction qui retourne un angle
