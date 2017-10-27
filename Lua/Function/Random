@@ -1,0 +1,7 @@
+-- Pour un nombre réellement aléatoire
+
+math.randomseed(os.time())
+
+-- puis
+
+math.random(x,y)
