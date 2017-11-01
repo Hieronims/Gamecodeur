@@ -125,61 +125,126 @@ tetros[7] = {
 	}
 }
 
-local currentTetros = 3
-local currentRotation = 1
+
+local currentTetros = {}
+currentTetros.shapeid = 1 -- forme
+currentTetros.rotation = 1
+currentTetros.position = { x=1, y=1 }
+
+local grid = {}
+grid.offsetX = 0
+grid.offsetY = 0
+grid.width = 10
+grid.height = 20
+grid.ceilSize = 0 
+grid.cells = {}
+
+function SpawnTetros()
+  local new = math.random(1 , #tetros)
+  currentTetros.shapeid = new
+  currentTetros.rotation = 1
+  local tetrosWidth = #tetros[currentTetros.shapeid][currentTetros.rotation][1]
+  currentTetros.position.x = (math.floor((grid.width - tetrosWidth) / 2)) + 1 -- Pourquoi + 1 / A cause de l'arrondi :-)
+  currentTetros.position.y = 1
+end
+
+
+function InitGrid()
+  local h = hauteur / grid.height
+  grid.cellSize = h -- On définit la taille d'une cellule en hauteur et largeur par rapport à la hauteur et la taille de la grille
+  grid.offsetX = (largeur / 2 ) -  ((grid.cellSize * grid.width) /2 )
+  grid.offsetY = 0
+  grid.cells = {}
+  for l=1, grid.height do
+    grid.cells[l] = {}
+    for c=1, grid.width do
+      grid.cells[l][c] = 0
+    end
+  end
+end
+
+
 function love.load()
   
   largeur = love.graphics.getWidth()
   hauteur = love.graphics.getHeight()
-  
+  InitGrid()
+  SpawnTetros()
 end
 
 function love.update(dt)
+ 
+end
+function DrawGrid()
+  local h = grid.cellSize 
+  local w = h
+  love.graphics.setColor(255, 255, 255, 50)
+  local x,y
+  for l=1,grid.height do
+    grid.cells[l]= {}
+    for c=1, grid.width do
+      x = (c-1)*w
+      y = (l-1)*h
+      x = x + grid.offsetX
+      y = y + grid.offsetY
+      love.graphics.rectangle("fill", x, y, w-1, h-1 )
+    end
+  end
+  
 
+end
+function DrawShape(pShape, pColumn, pLine)
+  love.graphics.setColor (255, 0, 0)
+   for l=1,#pShape do 
+      for c=1, #pShape[l] do
+        local x = (c-1) * grid.cellSize
+        local y = (l-1) * grid.cellSize
+        -- Ajouter la position de la pièce
+        x = x + (pColumn -1) * grid.cellSize
+        y = y + (pLine   -1) * grid.cellSize
+        -- Ajout de la position de la grille
+        x = x + grid.offsetX
+        y = y + grid.offsetY
+        if pShape[l][c] == 1 then
+          love.graphics.rectangle("fill", x, y, grid.cellSize - 1, grid.cellSize - 1)
+        end
+      end
+    end
 end
 
 function love.draw()
-    local shape = tetros[currentTetros][currentRotation]
-	
-	for l=1,#shape do
-		for c=1, #shape[l] do
-			local x = (l - 1 ) * 32
-			local y = (c - 1 ) * 32
-			if shape[l][c] == 1 then
-				love.graphics.setColor(255 , 255 , 255)
-				love.graphics.rectangle("fill", x, y, 31, 31)
-			else
-				love.graphics.setColor(255 , 0 , 0)
-				love.graphics.rectangle("fill", x, y, 31, 31)
-			end
-		end
-	end
-	
+  
+  local shape = tetros[currentTetros.shapeid][currentTetros.rotation]
+	DrawShape(shape, currentTetros.position.x, currentTetros.position.y)
+	DrawGrid() -- Dessine la grille
+  
 end
 
 function love.keypressed(key)
-	print (#tetros)
+
   
 -- faire tourner le tetromino  
 	if key == "right" then
-		currentRotation = currentRotation + 1  
-		if currentRotation > #tetros[currentTetros] then
-			currentRotation = 1	
+		currentTetros.rotation = currentTetros.rotation + 1  
+		if currentTetros.rotation > #tetros[currentTetros.shapeid] then
+			currentTetros.rotation = 1	
 		end
 	
 	end
 	if key == "left" then
-		currentRotation = currentRotation - 1  
-		if currentRotation < 1 then
-			currentRotation = #tetros[currentTetros]
+		currentTetros.rotation = currentTetros.rotation - 1  
+		if currentTetros.rotation < 1 then
+			currentTetros.rotation = #tetros[currentTetros.shapeid]
 		end
 	end
 -- passer au tetromino suivant
 
 	if key == "space" then
-		currentTetros = currentTetros + 1
-		if currentTetros > #tetros then
-		currentTetros = 1
+		currentTetros.shapeid = currentTetros.shapeid + 1
+    currentTetros.rotation = 1
+		if currentTetros.shapeid > #tetros then
+		currentTetros.shapeid = 1
+    
 		end
 		
 	end
