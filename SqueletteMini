@@ -1,4 +1,4 @@
-- Cette ligne permet d'afficher des traces dans la console pendant l'éxécution
+-- Cette ligne permet d'afficher des traces dans la console pendant l'éxécution
 io.stdout:setvbuf('no')
 
 -- Empèche Love de filtrer les contours des images quand elles sont redimentionnées
