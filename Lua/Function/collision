@@ -1,0 +1,33 @@
+function Creeimage(x,y,img)
+ 
+  local  monImage={}
+
+  monImage.image = love.graphics.newImage(img)
+  monImage.x = x
+  monImage.y = y
+
+    monImage.isCliked = function(mouseX,mouseY) 
+
+      if (mouseX >= monImage.x )  and  (mouseX <=   monImage.x + monImage.image:getWidth() )
+      and (mouseY >= monImage.y ) and ( mouseY<= monImage.y  + monImage.image:getHeight())    then
+         return true 
+      else
+        return false
+      end
+    end 
+
+  return monImage
+end
+puis
+function love.mousepressed(x, y, button, istouch)
+  if button == 1 then
+    -- apelle la fonction de l'objet img.isClicked
+    if (img.isCliked(x,y)) then
+       monTexte ="clique"
+    else
+      monTexte ="rien"
+
+    end
+
+  end
+end
